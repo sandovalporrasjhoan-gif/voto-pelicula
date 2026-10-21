@@ -84,10 +84,10 @@ app.patch('/modify/:id', (req, res) => {
 });
 
 app.delete('/delete/:id', (req, res) => {
-    console.log("eliminamos", req.params);
+    console.log("eliminamos porque tiene 0 votos", req.params);
     const movieId = parseInt(req.params.id);
     const index = peliculas.findIndex(p => p.id === movieId);
-    if (index == 0) {
+    if (index !== -1) {
         peliculas.splice(index, 1);
         res.json({ message: "Película eliminada correctamente" });
     } else {
