@@ -47,6 +47,53 @@ app.get('/movies/:id', (req, res) => {
     }
 });
 
+app.get('/result', (req, res) => {
+
+    console.log("votos", req.query);
+const peliculasOrdenadas = [...peliculas].sort((a, b) => {
+    return b.votes - a.votes;
+});
+    res.json(peliculasOrdenadas);
+});
+
+app.post('/agree', (req, res) => {
+    console.log("lo agregamos", req.body);
+    const newMovie ={
+        id: peliculas.length + 1,
+        title: req.body.title,
+        description: req.body.description,
+        votes: 0
+    }
+    peliculas.push(newMovie);
+    res.json(peliculas);
+});
+
+app.patch('/modify/:id', (req, res) => {
+    const movieId = parseInt(req.params.id);
+    const { title, description } = req.body;
+    const movie = peliculas.find(p => p.id === movieId);
+    console.log("modificacion xd", req.body);
+    if (movie) {
+        movie.title = title;
+        movie.description = description;
+        res.json(movie);
+    } else {
+        console.log("Película no esta");
+        res.status(404).json({ error: "Película no encontrada" });
+    }
+});
+
+app.delete('/delete/:id', (req, res) => {
+    console.log("eliminamos", req.params);
+    const movieId = parseInt(req.params.id);
+    const index = peliculas.findIndex(p => p.id === movieId);
+    if (index == 0) {
+        peliculas.splice(index, 1);
+        res.json({ message: "Película eliminada correctamente" });
+    } else {
+        res.status(404).json({ error: "Película no encontrada" });
+    }
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
